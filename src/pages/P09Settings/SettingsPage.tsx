@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { PinGate } from '@/components/common/PinGate';
+import { toast } from '@/components/common/Toast';
 import styleText from './SettingsPage.css?inline';
 import { useStyleSheet } from '@/hooks/useStyleSheet';
 
@@ -46,7 +47,7 @@ function Toggle(props: { on: boolean; label: string; onChange: (v: boolean) => v
       aria-checked={props.on}
       aria-label={props.label}
       className="st-sw"
-      style={{ background: props.on ? '#85505A' : '#D9CBC4' }}
+      style={{ background: props.on ? '#7A4450' : '#D9CBC4' }}
       onClick={() => props.onChange(!props.on)}
     >
       <i style={{ left: props.on ? 21 : 3 }} />
@@ -81,10 +82,20 @@ export default function SettingsPage() {
   };
 
   const addHoliday = () => {
-    if (!newHol.date) return;
+    if (!newHol.date) {
+      toast('휴무 날짜를 먼저 선택해 주세요', 'warn');
+      return;
+    }
     setHolidays((h) => [...h, { id: Date.now(), ...newHol, memo: '' }]);
     setNewHol({ date: '', kind: '매장', who: '전체' });
     touch();
+    toast(`${newHol.date} ${newHol.kind} 휴무일을 추가했어요`);
+  };
+
+  const saveAll = () => {
+    setDirty(false);
+    setSaved(true);
+    toast('매장 설정을 저장했어요');
   };
 
   const updMenu = (id: number, patch: Partial<Menu>) => {
@@ -97,15 +108,11 @@ export default function SettingsPage() {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1200px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
-        <div>
-          <Sidebar active="settings" />
-        </div>
+      <div style={{ flex: '0 0 232px' }}>
+        <Sidebar active="settings" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: '0', display: 'flex', flexDirection: 'column' }}>
-        <div>
-          <Topbar crumb="파트너 센터 / 매장 설정" />
-        </div>
+        <Topbar crumb="파트너 센터 / 매장 설정" />
         <PinGate id="settings" title="매장 설정">
           <div className="st-wrap">
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
@@ -114,17 +121,14 @@ export default function SettingsPage() {
                 <p className="st-sub">매장 정보, 시술 주기, 예측 기준, 스탭 잠금과 발송 규칙을 관리해요.</p>
               </div>
               <div className="st-savebar">
-                <span className="st-meta" style={{ color: dirty ? '#85505A' : undefined }}>
+                <span className="st-meta kp-fade" key={dirty ? 'd' : saved ? 's' : 'n'} style={{ color: dirty ? '#7A4450' : undefined }}>
                   {dirty ? '저장되지 않은 변경 사항이 있어요' : saved ? '저장됨 · 2026.11.23' : '변경 사항 없음'}
                 </span>
                 <button
                   type="button"
                   className="st-btn p"
                   disabled={!dirty}
-                  onClick={() => {
-                    setDirty(false);
-                    setSaved(true);
-                  }}
+                  onClick={saveAll}
                 >
                   변경사항 저장
                 </button>
@@ -178,11 +182,11 @@ export default function SettingsPage() {
               <div>
                 <div className="st-lbl">휴무일</div>
                 {holidays.map((h) => (
-                  <div className="st-row" key={h.id}>
+                  <div className="st-row kp-fade" key={h.id}>
                     <span className="num" style={{ width: 96 }}>{h.date}</span>
                     <span className={h.kind === '매장' ? 'st-tag' : 'st-tag w'}>{h.kind} 휴무</span>
                     <span className="grow">{h.who}{h.memo ? ` · ${h.memo}` : ''}</span>
-                    <button type="button" className="st-btn" onClick={() => { setHolidays(holidays.filter((x) => x.id !== h.id)); touch(); }}>삭제</button>
+                    <button type="button" className="st-btn" onClick={() => { setHolidays(holidays.filter((x) => x.id !== h.id)); touch(); toast(`${h.date} ${h.kind} 휴무일을 삭제했어요`); }}>삭제</button>
                   </div>
                 ))}
                 <div className="st-row">
@@ -272,7 +276,7 @@ export default function SettingsPage() {
                     <span className="nm" style={{ width: 56 }}>{s.name}</span>
                     <span className="st-tag">{s.part}</span>
                     <span className="grow st-meta">{s.pin ? 'PIN 설정됨' : 'PIN 미설정'}</span>
-                    <button type="button" className="st-btn" onClick={() => { setStaff(staff.map((x) => (x.id === s.id ? { ...x, pin: true } : x))); touch(); }}>
+                    <button type="button" className="st-btn" onClick={() => { setStaff(staff.map((x) => (x.id === s.id ? { ...x, pin: true } : x))); touch(); toast(s.pin ? `${s.name} PIN 변경을 반영했어요 · 저장하면 적용돼요` : `${s.name} PIN을 설정했어요 · 저장하면 적용돼요`); }}>
                       {s.pin ? 'PIN 변경' : 'PIN 설정'}
                     </button>
                     <label className="st-chk">
@@ -352,7 +356,7 @@ export default function SettingsPage() {
             </section>
 
             <div className="st-savebar">
-              <button type="button" className="st-btn p" disabled={!dirty} onClick={() => { setDirty(false); setSaved(true); }}>변경사항 저장</button>
+              <button type="button" className="st-btn p" disabled={!dirty} onClick={saveAll}>변경사항 저장</button>
             </div>
             <p className="st-meta">시연용 화면이며 실제 발송·권한 정책은 운영 환경 연동 후 적용돼요.</p>
           </div>

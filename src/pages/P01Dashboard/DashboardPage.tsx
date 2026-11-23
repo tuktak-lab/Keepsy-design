@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppLink } from '@/components/common/AppLink';
 import { Avatar } from '@/components/common/Avatar';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -6,46 +6,8 @@ import { Topbar } from '@/components/layout/Topbar';
 import logo from '@/assets/images/keepsy-logo-thin.png';
 import styleText from './DashboardPage.css?inline';
 import { useStyleSheet } from '@/hooks/useStyleSheet';
-
-type Pt = [number, number];
-
-// 점들을 부드러운 곡선(path)으로 연결합니다.
-function smooth(pts: Pt[]): string {
-  let d = `M${pts[0][0]},${pts[0][1]}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i - 1] ?? pts[i];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[i + 2] ?? p2;
-    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += ` C${c1x},${c1y} ${c2x},${c2y} ${p2[0]},${p2[1]}`;
-  }
-  return d;
-}
-
-function Spark({ values, id }: { values: number[]; id: string }) {
-  const W = 200;
-  const H = 64;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const pts: Pt[] = values.map((v, i) => [(i / (values.length - 1)) * W, H - 6 - ((v - min) / (max - min || 1)) * (H - 16)]);
-  const line = smooth(pts);
-  return (
-    <svg className="spark" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#EBC5C0" stopOpacity=".55" />
-          <stop offset="1" stopColor="#EBC5C0" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={`${line} L${W},${H} L0,${H} Z`} fill={`url(#${id})`} />
-      <path d={line} fill="none" stroke="#CBA3A3" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-}
+import { smooth, type Pt } from '@/utils/smooth';
+import { CountUp } from '@/components/common/CountUp';
 
 const Icon = ({ d, size = 22 }: { d: string; size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -81,7 +43,7 @@ export default function DashboardPage() {
 
   const segs = [
     { label: '예정', n: 198, color: '#F0DAD6', rule: '다음 방문 예측 기간 전' },
-    { label: '주기 도래', n: 14, color: '#85505A', rule: '예측 기간 안 · 예약 없음' },
+    { label: '주기 도래', n: 14, color: '#7A4450', rule: '예측 기간 안 · 예약 없음' },
     { label: '이탈 신호', n: 22, color: '#CC9A9E', rule: '예측 종료 후 이탈 신호 기간 안' },
     { label: '장기 미방문', n: 14, color: '#C9BDB9', rule: '이탈 신호 기간 이후' },
   ];
@@ -96,6 +58,14 @@ export default function DashboardPage() {
     return a;
   });
 
+  // 첫 진입 시 도넛이 0에서 채워지도록 다음 프레임에 켭니다
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    const r = requestAnimationFrame(() => setDrawn(true));
+    return () => cancelAnimationFrame(r);
+  }, []);
+  const [tip, setTip] = useState<number | null>(null);
+
   // 방문 흐름 차트 (viewBox 기준 좌표)
   const CW = 1100;
   const CH = 200;
@@ -103,9 +73,12 @@ export default function DashboardPage() {
   const X1 = CW - 24;
   const yOf = (v: number) => CH - 24 - (v / 130) * (CH - 44);
   const toPts = (vs: number[]): Pt[] => vs.map((v, i) => [X0 + (i / (vs.length - 1)) * (X1 - X0), yOf(v)]);
-  const visit = toPts([54, 76, 121, 86, 130, 89, 116]);
-  const fresh = toPts([30, 37, 64, 33, 76, 43, 22]);
-  const returning = toPts([22, 30, 52, 28, 66, 36, 18]);
+  const VISIT = [54, 76, 121, 86, 130, 89, 116];
+  const FRESH = [30, 37, 64, 33, 76, 43, 22];
+  const RETURN = [22, 30, 52, 28, 66, 36, 18];
+  const visit = toPts(VISIT);
+  const fresh = toPts(FRESH);
+  const returning = toPts(RETURN);
   const visitLine = smooth(visit);
 
   const T: Record<string, [string, string]> = {
@@ -126,7 +99,7 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1040px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="dashboard" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -139,44 +112,37 @@ export default function DashboardPage() {
                 <br />
                 <img src={logo} alt="Keepsy" className="kp-hello-logo" />
                 입니다
-                <svg className="kp-spark-star" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"></path>
-                </svg>
               </h1>
               <p className="kp-lead">오늘도 고객과 더 가까워지는 하루가 되길 바라요.</p>
             </div>
             <AppLink href="/insights" className="kp-cta">
-              <Icon d={ICON.spark} size={18} />
               오늘 관리할 고객 보기
-              <Icon d={ICON.arrow} size={18} />
             </AppLink>
           </div>
 
-          <section className="kp-kpis" aria-label="고객 현황 요약">
+          <section className="kp-kpis kp-card" aria-label="고객 현황 요약">
             {kpis.map((k, i) => (
-              <AppLink href={k.href} className="kp-card kp-kpi" key={k.label}>
-                <Spark values={k.series} id={`kpspark${i}`} />
-                <div className="kp-kpi-head">
-                  <span className="kp-ico">
-                    <Icon d={k.icon} size={22} />
-                  </span>
-                  {k.label}
+              <AppLink href={k.href} className="kp-kpi" key={k.label}>
+                <div className="kp-kpi-head">{k.label}</div>
+                <div className="kp-kpi-val num">
+                  <CountUp value={Number(k.value)} />
                 </div>
-                <div className="kp-kpi-val num">{k.value}</div>
                 <div className="kp-kpi-note">
                   {k.delta && (
-                    <span className="up">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true">
-                        <path d="M5 1l4.5 8h-9z"></path>
-                      </svg>
-                      {k.delta}
-                    </span>
+                    <span className="up">지난달 대비 {k.delta}</span>
                   )}
                   {k.delta && k.extra && <span className="sep" />}
                   {k.extra}
                 </div>
               </AppLink>
             ))}
+            <AppLink href="/performance" className="kp-kpi">
+              <div className="kp-kpi-head">재예약 전환율</div>
+              <div className="kp-kpi-val num">
+                <CountUp value={18} format={(n) => n + '%'} />
+              </div>
+              <div className="kp-kpi-note">11월 재방문 안내 · 대조군 대비 +6%p</div>
+            </AppLink>
           </section>
 
           <div className="kp-mid">
@@ -184,7 +150,6 @@ export default function DashboardPage() {
               <div className="kp-card-head">
                 <div>
                   <h2 className="kp-card-title">
-                    <Icon d={ICON.chart} size={24} />
                     고객 재방문 상태
                   </h2>
                   <p className="kp-card-sub">시술별 방문 주기 예측으로 보는 현재 상태</p>
@@ -208,12 +173,24 @@ export default function DashboardPage() {
                   >
                     <g transform="rotate(-90 112 112)" fill="none" strokeWidth="30">
                       {arcs.map((a, i) => (
-                        <circle cx="112" cy="112" r={R} stroke={a.color} strokeDasharray={a.dash} strokeDashoffset={a.off} key={i}></circle>
+                        <circle
+                          cx="112"
+                          cy="112"
+                          r={R}
+                          stroke={a.color}
+                          strokeDasharray={drawn ? a.dash : `0 ${C}`}
+                          strokeDashoffset={a.off}
+                          className="kp-arc"
+                          style={{ transitionDelay: `${i * 90}ms` }}
+                          key={i}
+                        ></circle>
                       ))}
                     </g>
                   </svg>
                   <div className="kp-donut-center">
-                    <b className="num">248</b>
+                    <b className="num">
+                      <CountUp value={248} />
+                    </b>
                     <span>전체 고객</span>
                   </div>
                 </div>
@@ -230,92 +207,76 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            <section className="kp-card kp-insight">
-              <div className="kp-card-head" style={{ alignItems: 'center' }}>
-                <h2 className="kp-card-title" style={{ fontWeight: 500 }}>
-                  <Icon d={ICON.spark} size={24} />
-                  최근 캠페인 성과
-                </h2>
-                <AppLink href="/performance" className="kp-circle-btn" aria-label="성과 분석 보기">
-                  <Icon d={ICON.arrow} size={16} />
-                </AppLink>
+          </div>
+            <section className="kp-card kp-flow glass">
+              <div className="kp-card-head">
+                <div>
+                  <h2 className="kp-card-title">
+                    고객의 방문 흐름
+                  </h2>
+                  <p className="kp-card-sub" style={{ marginLeft: 0, marginTop: '8px' }}>
+                    최근 4주 · 주별 신규 / 재방문 고객
+                  </p>
+                </div>
+                <div className="kp-legend">
+                  <span><i style={{ background: '#7A4450' }}></i>방문 고객</span>
+                  <span><i style={{ background: '#CF8E94' }}></i>신규</span>
+                  <span><i style={{ background: '#E3BEBE' }}></i>재방문</span>
+                </div>
               </div>
-              <div className="kp-insight-img">
-                <svg width="72" height="72" viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="8" y="12" width="46" height="42" rx="6" fill="#F6EEEA"></rect>
-                  <path d="M8 26h46 M20 8v10 M42 8v10"></path>
-                  <path d="M18 34h4 M28 34h4 M38 34h4 M18 42h4 M28 42h4" strokeWidth="3"></path>
-                  <circle cx="52" cy="50" r="13" fill="#F6EEEA"></circle>
-                  <path d="M52 43v7l5 3"></path>
+              <div className="kp-chart-wrap" onMouseLeave={() => setTip(null)}>
+                <svg className="kp-chart" viewBox={`0 0 ${CW} ${CH}`} role="img" aria-label="최근 4주 방문 고객, 신규, 재방문 추이">
+                  {[0, 50, 100].map((g) => (
+                    <g key={g}>
+                      <line x1={X0} x2={X1} y1={yOf(g)} y2={yOf(g)} stroke="#E6D8D1" strokeWidth="1" strokeDasharray={g === 0 ? '' : '3 5'} />
+                      <text x={X0 - 14} y={yOf(g) + 4} textAnchor="end" fontSize="13" fill="#6B605B">{g}</text>
+                    </g>
+                  ))}
+                  {visit.slice(1, -1).map(([x]) => (
+                    <line key={x} x1={x} x2={x} y1={yOf(0)} y2={yOf(130)} stroke="#EADFD8" strokeWidth="1" />
+                  ))}
+                  <path className="kp-draw" pathLength={1} d={smooth(returning)} fill="none" stroke="#E3BEBE" strokeWidth="1.6" />
+                  <path className="kp-draw" pathLength={1} d={smooth(fresh)} fill="none" stroke="#CF8E94" strokeWidth="1.8" />
+                  <path className="kp-draw" pathLength={1} d={visitLine} fill="none" stroke="#7A4450" strokeWidth="1.8" />
+                  {tip !== null ? <line x1={visit[tip][0]} x2={visit[tip][0]} y1={yOf(0)} y2={yOf(130)} stroke="#B5ABA4" strokeWidth="1" /> : null}
+                  <g className="kp-pop">
+                    {visit.map(([x, y], i) => (
+                      <circle key={`v${i}`} cx={x} cy={y} r={tip === i ? 6 : 4.5} fill="#7A4450" className="kp-pt" />
+                    ))}
+                    {fresh.map(([x, y], i) => (
+                      <circle key={`f${i}`} cx={x} cy={y} r={tip === i ? 6 : 4.5} fill="#CF8E94" className="kp-pt" />
+                    ))}
+                    {returning.map(([x, y], i) =>
+                      tip === i ? <circle key={`r${i}`} cx={x} cy={y} r={5} fill="#E3BEBE" /> : null,
+                    )}
+                  </g>
+                  {/* 마우스를 올릴 구간(점 하나당 세로 띠) */}
+                  {visit.map(([x], i) => {
+                    const w = (X1 - X0) / (visit.length - 1);
+                    return (
+                      <rect
+                        key={`h${i}`}
+                        x={x - w / 2}
+                        y={0}
+                        width={w}
+                        height={CH}
+                        fill="transparent"
+                        onMouseEnter={() => setTip(i)}
+                      />
+                    );
+                  })}
                 </svg>
-              </div>
-              <p className="kp-insight-msg">
-                11월 재방문 안내,
-                <br />
-                재예약 전환율 18%로
-                <br />
-                대조군보다 6%p 높아요!
-              </p>
-              <div className="kp-insight-foot">
-                <Icon d={ICON.bulb} size={20} />
-                <span>
-                  귀속 기간 14일 · 모의 데이터
-                  <br />
-                  기준 값이에요.
-                </span>
-                <AppLink href="/performance" className="kp-more">
-                  더보기
-                  <Icon d={ICON.arrow} size={14} />
-                </AppLink>
+                {tip !== null ? (
+                  <div className="kp-tip" style={{ left: `${(visit[tip][0] / CW) * 100}%`, top: `${(Math.min(visit[tip][1], fresh[tip][1]) / CH) * 100}%` }}>
+                    <b className="num">방문 {VISIT[tip]}명</b>
+                    <br />
+                    <span className="num">
+                      신규 {FRESH[tip]}명 · 재방문 {RETURN[tip]}명
+                    </span>
+                  </div>
+                ) : null}
               </div>
             </section>
-          </div>
-
-          <section className="kp-card kp-flow">
-            <div className="kp-card-head">
-              <div>
-                <h2 className="kp-card-title">
-                  <Icon d={ICON.trend} size={24} />
-                  고객의 방문 흐름
-                </h2>
-                <p className="kp-card-sub" style={{ marginLeft: 0, marginTop: '8px' }}>
-                  최근 4주 · 주별 신규 / 재방문 고객
-                </p>
-              </div>
-              <div className="kp-legend">
-                <span><i style={{ background: '#85505A' }}></i>방문 고객</span>
-                <span><i style={{ background: '#EBC5C0' }}></i>신규</span>
-                <span><i style={{ background: '#CF8E94' }}></i>재방문</span>
-              </div>
-            </div>
-            <svg className="kp-chart" viewBox={`0 0 ${CW} ${CH}`} role="img" aria-label="최근 4주 주별 방문 고객, 신규, 재방문 추이">
-              <defs>
-                <linearGradient id="kpflow" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#CDBDB5" stopOpacity=".45" />
-                  <stop offset="1" stopColor="#CDBDB5" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              {[0, 50, 100].map((g) => (
-                <g key={g}>
-                  <line x1={X0} x2={X1} y1={yOf(g)} y2={yOf(g)} stroke="#E6D8D1" strokeWidth="1" strokeDasharray={g === 0 ? '' : '3 5'} />
-                  <text x={X0 - 14} y={yOf(g) + 4} textAnchor="end" fontSize="13" fill="#7A6D68">{g}</text>
-                </g>
-              ))}
-              {visit.slice(1, -1).map(([x]) => (
-                <line key={x} x1={x} x2={x} y1={yOf(0)} y2={yOf(130)} stroke="#EADFD8" strokeWidth="1" />
-              ))}
-              <path d={`${visitLine} L${X1},${yOf(0)} L${X0},${yOf(0)} Z`} fill="url(#kpflow)" />
-              <path d={smooth(returning)} fill="none" stroke="#E3BEBE" strokeWidth="1.6" />
-              <path d={smooth(fresh)} fill="none" stroke="#CF8E94" strokeWidth="1.8" />
-              <path d={visitLine} fill="none" stroke="#85505A" strokeWidth="1.8" />
-              {visit.slice(1).map(([x, y], i) => (
-                <circle key={`v${i}`} cx={x} cy={y} r="4.5" fill="#85505A" />
-              ))}
-              {fresh.slice(1).map(([x, y], i) => (
-                <circle key={`f${i}`} cx={x} cy={y} r="4.5" fill="#CF8E94" />
-              ))}
-            </svg>
-          </section>
 
           <div className="kp-low">
             <section className="kp-card kp-care">
@@ -330,7 +291,7 @@ export default function DashboardPage() {
                     <AppLink href="/customers/detail" style={{ fontWeight: 600, fontSize: '15px' }}>
                       {c.name}
                     </AppLink>
-                    <span style={{ fontSize: '12.5px', color: '#7A6D68' }}>
+                    <span style={{ fontSize: '12.5px', color: '#6B605B' }}>
                       {c.days} · {c.note}
                     </span>
                   </div>
@@ -350,7 +311,7 @@ export default function DashboardPage() {
                   <span className="num" style={{ fontWeight: 600, color: '#8A6F66', fontSize: '13px' }}>{a.t}</span>
                   <span style={{ display: 'flex', flexDirection: 'column' }}>
                     <strong style={{ fontSize: '14px' }}>{a.name}</strong>
-                    <span style={{ fontSize: '13px', color: '#6A5D58' }}>{a.what}</span>
+                    <span style={{ fontSize: '13px', color: '#4A3F3B' }}>{a.what}</span>
                   </span>
                 </div>
               ))}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLink } from '@/components/common/AppLink';
 import { Avatar } from '@/components/common/Avatar';
 import { Photo } from '@/components/common/Photo';
+import { toast } from '@/components/common/Toast';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import styleText from './CustomerDetailPage.css?inline';
@@ -22,14 +23,14 @@ const CATS = [
 const PRED = [
   {
     cat: '네일',
-    chip: ['예정', '#F3EEEE', '#5B5552'],
+    chip: ['예정', '#F3EEEE', '#4A3F3B'],
     when: '약 3~4주 후 (평균 24일, 방문 6회)',
     range: '예측 11.14 ~ 11.21',
     note: '11.28 14:00 예약이 있어 재방문 안내 대상에서 제외돼요.',
   },
   {
     cat: '속눈썹',
-    chip: ['주기 도래', '#F9EBE8', '#85505A'],
+    chip: ['주기 도래', '#F9EBE8', '#7A4450'],
     when: '약 5~6주 후 (시술 평균 주기 기준)',
     range: '예측 11.04 ~ 11.11 · 12일 경과',
     note: '방문 2회라 시술 평균 주기로 예측했어요. 예약이 없어요.',
@@ -57,10 +58,18 @@ export default function CustomerDetailPage() {
   const [healthOk, setHealthOk] = useState(true);
 
   const fmt = (ok: boolean, d: string) => (ok ? `동의 ${d}` : '미동의');
+  const setPhoto = (ok: boolean) => {
+    setPhotoOk(ok);
+    toast(ok ? '시술 사진 동의를 다시 받았어요' : '시술 사진 동의를 철회했어요 · 저장된 사진을 삭제했어요', ok ? 'success' : 'warn');
+  };
+  const setHealth = (ok: boolean) => {
+    setHealthOk(ok);
+    toast(ok ? '건강 정보 동의를 다시 받았어요' : '건강 정보 동의를 철회했어요 · 건강 주의사항을 삭제했어요', ok ? 'success' : 'warn');
+  };
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1280px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="customers" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: '0', display: 'flex', flexDirection: 'column' }}>
@@ -79,7 +88,7 @@ export default function CustomerDetailPage() {
             <div className="col" style={{ gap: '3px' }}>
               <div className="row" style={{ gap: '10px' }}>
                 <h1 className="h1" style={{ fontSize: '24px' }}>김민지</h1>
-                <span className="chip" style={{ background: '#F9EBE8', color: '#85505A' }}><i></i>주기 도래</span>
+                <span className="chip" style={{ background: '#F9EBE8', color: '#7A4450' }}><i></i>주기 도래</span>
               </div>
               <span className="sub num">010-****-4821 · <span className="meta">🔒 전체 번호 보기는 PIN 확인 후 가능해요</span></span>
               <span className="meta">고객 코드 NM-C0248</span>
@@ -92,6 +101,7 @@ export default function CustomerDetailPage() {
             ))}
           </div>
 
+          <div className="kp-fade" key={tab} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {tab === 'summary' ? (
             <>
               <section className="card col" style={{ gap: '14px' }}>
@@ -126,7 +136,7 @@ export default function CustomerDetailPage() {
                         <span className="chip" style={{ background: p.chip[1], color: p.chip[2] }}><i></i>{p.chip[0]}</span>
                       </div>
                       <span style={{ fontWeight: 500 }}>{p.when}</span>
-                      <span className="num" style={{ color: '#85505A', fontSize: '13px' }}>{p.range}</span>
+                      <span className="num" style={{ color: '#7A4450', fontSize: '13px' }}>{p.range}</span>
                       <span className="meta">{p.note}</span>
                     </div>
                   ))}
@@ -143,15 +153,15 @@ export default function CustomerDetailPage() {
                   {RHYTHM.map((r, i) => (
                     <div key={i} className="col" style={{ alignItems: 'center', minWidth: '78px', gap: '6px', position: 'relative' }}>
                       <span style={{ width: '100%', height: '2px', background: i === 0 ? 'transparent' : '#E3D5CE', position: 'absolute', top: '5px', left: '-50%' }}></span>
-                      <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: r.c === '네일' ? '#85505A' : '#D9AFA6', position: 'relative' }}></span>
+                      <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: r.c === '네일' ? '#7A4450' : '#D9AFA6', position: 'relative' }}></span>
                       <span className="num" style={{ fontSize: '12.5px', fontWeight: 600 }}>{r.d}</span>
                       <span className="meta">{r.c}</span>
                     </div>
                   ))}
                   <div className="col" style={{ alignItems: 'center', minWidth: '78px', gap: '6px', position: 'relative' }}>
-                    <span style={{ width: '100%', borderTop: '2px dashed #85505A', position: 'absolute', top: '5px', left: '-50%' }}></span>
-                    <span style={{ width: '12px', height: '12px', borderRadius: '50%', border: '2.5px solid #85505A', background: '#fff', boxSizing: 'border-box', position: 'relative' }}></span>
-                    <span className="num" style={{ fontSize: '12.5px', fontWeight: 600, color: '#85505A' }}>11.28</span>
+                    <span style={{ width: '100%', borderTop: '2px dashed #7A4450', position: 'absolute', top: '5px', left: '-50%' }}></span>
+                    <span style={{ width: '12px', height: '12px', borderRadius: '50%', border: '2.5px solid #7A4450', background: '#fff', boxSizing: 'border-box', position: 'relative' }}></span>
+                    <span className="num" style={{ fontSize: '12.5px', fontWeight: 600, color: '#7A4450' }}>11.28</span>
                     <span className="meta">예약</span>
                   </div>
                 </div>
@@ -162,7 +172,7 @@ export default function CustomerDetailPage() {
                   <h2 className="h2">취향 프로필</h2>
                   <div className="row" style={{ gap: '6px' }}>
                     {['미니멀', '펄', '짧은 길이', '자연스러운 C컬'].map((t) => (
-                      <span className="chip" style={{ background: '#F9EBE8', color: '#85505A' }} key={t}>{t}</span>
+                      <span className="chip" style={{ background: '#F9EBE8', color: '#7A4450' }} key={t}>{t}</span>
                     ))}
                   </div>
                   <dl style={{ display: 'grid', gridTemplateColumns: '78px 1fr', gap: '8px', fontSize: '13px' }}>
@@ -203,10 +213,10 @@ export default function CustomerDetailPage() {
                   <span className="meta">{photoOk ? '사진 동의 확인 · 비공개 저장' : '사진 동의 철회됨'}</span>
                 </div>
                 {photoOk ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(170px,100%),1fr))', gap: '12px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(120px,140px))', gap: '12px' }}>
                     {H.slice(0, 3).map((h) => (
                       <figure key={h.date} style={{ margin: 0 }} className="col">
-                        <div style={{ height: 150, overflow: 'hidden', borderRadius: 16 }}><Photo kind={h.k} h="150" bg={h.bg} /></div>
+                        <div style={{ height: 110, overflow: 'hidden', borderRadius: 8 }}><Photo kind={h.k} h="110" bg={h.bg} /></div>
                         <figcaption className="meta num" style={{ paddingTop: 6 }}>{h.date} {h.treat}</figcaption>
                       </figure>
                     ))}
@@ -235,7 +245,7 @@ export default function CustomerDetailPage() {
                   <span>시술 사진</span>
                   <span className="row" style={{ gap: 10 }}>
                     <span className="num">{fmt(photoOk, '2026.06.26 14:03')}</span>
-                    {photoOk ? <button type="button" className="lk" onClick={() => setPhotoOk(false)}>철회</button> : <button type="button" className="lk" onClick={() => setPhotoOk(true)}>다시 동의 받기</button>}
+                    {photoOk ? <button type="button" className="lk" onClick={() => setPhoto(false)}>철회</button> : <button type="button" className="lk" onClick={() => setPhoto(true)}>다시 동의 받기</button>}
                   </span>
                 </div>
                 <div className="consent"><span>마케팅 수신</span><span className="num">동의 2026.06.26 14:03</span></div>
@@ -244,7 +254,7 @@ export default function CustomerDetailPage() {
                   <span>건강 정보</span>
                   <span className="row" style={{ gap: 10 }}>
                     <span className="num">{fmt(healthOk, '2026.09.28 11:20')}</span>
-                    {healthOk ? <button type="button" className="lk" onClick={() => setHealthOk(false)}>철회</button> : <button type="button" className="lk" onClick={() => setHealthOk(true)}>다시 동의 받기</button>}
+                    {healthOk ? <button type="button" className="lk" onClick={() => setHealth(false)}>철회</button> : <button type="button" className="lk" onClick={() => setHealth(true)}>다시 동의 받기</button>}
                   </span>
                 </div>
                 <p className="meta" style={{ ...consentBox }}>사진 동의를 철회하면 저장된 사진이, 건강 정보 동의를 철회하면 건강 주의사항 칸만 즉시 삭제돼요.</p>
@@ -301,6 +311,7 @@ export default function CustomerDetailPage() {
               ))}
             </section>
           ) : null}
+          </div>
           <p className="meta">시연용 고객 · 이미지예요. 동의를 받은 항목만 저장하고, 연락처는 기본으로 가려서 보여줘요.</p>
         </div>
       </main>

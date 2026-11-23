@@ -7,3 +7,657 @@ body {
 html {
   zoom: 0.85;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   가독성 공통 규칙 (모든 화면)
+   화면별 CSS보다 우선하도록 :root 를 붙였습니다.
+
+   글자색 3단계
+     --ink   #221D1B  진한 차콜: 제목·고객명·핵심 수치
+     --body  #3B302C  다크 브라운: 본문
+     --muted #6B605B  웜그레이: 보조 설명 (이보다 연한 글씨는 쓰지 않음)
+   면
+     배경 아이보리 #F5F0EB / 카드 화이트 + 얇은 테두리 #E6DDD5
+   포인트
+     딥 와인 #7A4450 (주요 버튼·선택 상태에만)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --ink: #221d1b;
+  --body: #3b302c;
+  --muted: #6b605b;
+  --line: #e6ddd5;
+  --line-soft: #efe8e2;
+  --bg: #f5f0eb;
+  --wine: #7a4450;
+  --wine-dark: #683945;
+}
+
+:root body {
+  /* 아이보리 바탕 + 크림·더스티 로즈 번짐 두 곳만: 글라스 패널이 은은하게 비치도록 */
+  background:
+    radial-gradient(900px 640px at 4% 0%, rgba(226, 206, 190, 0.38), transparent 62%),
+    radial-gradient(820px 600px at 98% 16%, rgba(214, 180, 180, 0.2), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 타이포그래피 위계: 페이지 제목 > 섹션 제목 > 본문 > 보조 */
+:root .h1,
+:root .st-h1 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+:root .h2,
+:root .kp-card-title,
+:root .st-card h2 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+:root .sub,
+:root .st-sub {
+  font-size: 13.5px;
+  color: var(--body);
+}
+:root .meta,
+:root .st-meta {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ── 표면 2종으로 통일 (모든 카드가 같은 테두리·곡률 10px, 그림자 없음) ──
+   1) 기본 카드: 불투명 소프트 화이트 — 목록·표·캘린더·폼 등 일반 콘텐츠
+   2) .glass: 반투명 프로스티드 글라스 + 상단 흰 하이라이트 — 주요 분석 패널·플로팅 상세 패널에만 */
+:root .card,
+:root .g,
+:root .kp-card,
+:root .st-card,
+:root .cp-card,
+:root .pf-card {
+  background: #fffefd;
+  border: 1px solid #e8dfd8;
+  border-radius: 10px;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+:root .glass {
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 0 0 1px rgba(110, 80, 70, 0.07),
+    0 6px 20px rgba(80, 55, 45, 0.05);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+/* 카드 안의 보조 영역: 카드 속 카드처럼 보이지 않게 테두리 없이 옅은 면만 */
+:root .cp-box,
+:root .pf-box,
+:root .pcard {
+  background: rgba(110, 80, 70, 0.035);
+  border: 0;
+  border-radius: 8px;
+}
+
+/* 버튼: 높이 38 · 좌우 16 · 곡률 8 · 13px/500 으로 통일 */
+:root .btn,
+:root .st-btn,
+:root .cp-btn,
+:root .pf-btn,
+:root .kp-btn,
+:root .kp-more,
+:root .kp-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 16px;
+  gap: 6px;
+  border-radius: 8px;
+  border: 1px solid #d8cdc5;
+  background: #fff;
+  color: var(--ink);
+  font: 500 13px 'Noto Sans KR', sans-serif;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+:root .btn:hover,
+:root .st-btn:hover,
+:root .cp-btn:hover,
+:root .pf-btn:hover,
+:root .kp-btn:hover,
+:root .kp-more:hover {
+  background: #f7f2ee;
+  text-decoration: none;
+}
+:root .btn-p,
+:root .st-btn.p,
+:root .cp-btn.p,
+:root .kp-btn.p,
+:root .kp-cta {
+  background: var(--wine);
+  border-color: var(--wine);
+  color: #fff;
+}
+:root .btn-p:hover,
+:root .st-btn.p:hover,
+:root .cp-btn.p:hover,
+:root .kp-btn.p:hover,
+:root .kp-cta:hover {
+  background: var(--wine-dark);
+  border-color: var(--wine-dark);
+}
+:root .btn-sm {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+:root .btn[disabled],
+:root .st-btn[disabled],
+:root .cp-btn[disabled],
+:root .pf-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 탭·세그먼트: 캡슐형 대신 8px 곡률로 통일 */
+:root .tabs,
+:root .kp-seg,
+:root .cp-seg,
+:root .pf-seg,
+:root .st-seg {
+  border-radius: 9px;
+  background: #ede6e0;
+}
+:root .tabs button,
+:root .kp-seg button,
+:root .cp-seg button,
+:root .pf-seg button,
+:root .st-seg button {
+  border-radius: 7px;
+  color: var(--body);
+}
+:root .tabs button[aria-selected='true'],
+:root .kp-seg button[aria-pressed='true'],
+:root .cp-seg button[aria-pressed='true'],
+:root .pf-seg button[aria-pressed='true'],
+:root .st-seg button[aria-pressed='true'] {
+  background: var(--wine);
+  color: #fff;
+}
+
+/* 상태 칩: 작은 각진 배지로 통일 */
+:root .chip,
+:root .cp-chip,
+:root .st-tag {
+  border-radius: 6px;
+}
+
+/* 입력칸 */
+:root .inp,
+:root .fld,
+:root .sel,
+:root .st-fld,
+:root .cp-fld {
+  border-color: #d8cdc5;
+  border-radius: 8px;
+  color: var(--ink);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   모션 시스템 (모든 화면 공통)
+   클릭 120ms · 호버 180ms · 탭 200ms · 패널 240ms · 차트 650ms (페이지 전환 효과는 쓰지 않음)
+   이징은 ease-out 계열(--ease)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-press: 120ms;
+  --t-hover: 180ms;
+  --t-tab: 200ms;
+  --t-panel: 240ms;
+  --t-page: 220ms;
+  --t-chart: 650ms;
+}
+
+/* 버튼: 호버 때 배경·테두리, 누르면 살짝 눌림 */
+:root .btn,
+:root .st-btn,
+:root .cp-btn,
+:root .pf-btn,
+:root .kp-btn,
+:root .kp-more,
+:root .kp-cta,
+:root .ib,
+:root .pill,
+:root .staff button {
+  transition: background-color var(--t-hover) var(--ease), border-color var(--t-hover) var(--ease),
+    color var(--t-hover) var(--ease), box-shadow var(--t-hover) var(--ease), transform var(--t-press) var(--ease);
+}
+:root .btn:active:not([disabled]),
+:root .st-btn:active:not([disabled]),
+:root .cp-btn:active:not([disabled]),
+:root .pf-btn:active:not([disabled]),
+:root .kp-btn:active,
+:root .kp-more:active,
+:root .kp-cta:active,
+:root .ib:active,
+:root .pill:active,
+:root .staff button:active {
+  transform: scale(0.97);
+}
+/* 주요 버튼: 호버 시 진해짐 + 아주 옅은 그림자 / 보조 버튼: 흰 면 + 테두리 진해짐 */
+:root .btn-p:hover,
+:root .st-btn.p:hover:not([disabled]),
+:root .cp-btn.p:hover,
+:root .kp-btn.p:hover,
+:root .kp-cta:hover {
+  box-shadow: 0 2px 8px rgba(122, 68, 80, 0.22);
+}
+:root .btn:not(.btn-p):hover:not([disabled]),
+:root .st-btn:not(.p):hover:not([disabled]),
+:root .cp-btn:not(.p):hover,
+:root .pf-btn:hover,
+:root .kp-btn:not(.p):hover,
+:root .kp-more:hover {
+  background: #fff;
+  border-color: #bfaea4;
+}
+:root :focus-visible {
+  outline: 2px solid rgba(122, 68, 80, 0.55);
+  outline-offset: 2px;
+}
+
+/* 카드·리스트: 누를 수 있는 것만 은은하게 반응 (떠오르거나 커지지 않음) */
+:root .card,
+:root .kp-card,
+:root .st-card,
+:root .cp-card,
+:root .pf-card {
+  transition: border-color var(--t-hover) var(--ease), background-color var(--t-hover) var(--ease),
+    box-shadow var(--t-hover) var(--ease);
+}
+:root a.kp-card:hover,
+:root a.card:hover,
+:root button.card:hover {
+  border-color: #cdb9b4;
+  box-shadow: 0 2px 10px rgba(80, 55, 45, 0.06);
+}
+:root .irow,
+:root .kp-segrow,
+:root .kp-care-row,
+:root .pend,
+:root .t-list button,
+:root .next,
+:root tr {
+  transition: background-color var(--t-hover) var(--ease), border-color var(--t-hover) var(--ease);
+}
+
+/* 탭·세그먼트: 선택 배경이 버튼 사이를 이동 (motion.ts 가 .kp-ind 위치를 잡음) */
+:root .kp-has-ind {
+  position: relative;
+  isolation: isolate;
+}
+:root .kp-has-ind > button {
+  position: relative;
+  z-index: 1;
+  transition: color var(--t-tab) var(--ease);
+}
+:root .kp-has-ind > button[aria-selected='true'],
+:root .kp-has-ind > button[aria-pressed='true'] {
+  background: transparent !important;
+  color: #fff !important;
+}
+:root .kp-ind {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  border-radius: 7px;
+  background: var(--wine);
+  pointer-events: none;
+}
+:root .kp-ind-ready > .kp-ind {
+  transition: transform var(--t-tab) var(--ease), width var(--t-tab) var(--ease), opacity var(--t-tab) var(--ease);
+}
+
+/* 목록·결과 갱신: 깜빡임 없이 살짝 페이드 (key 가 바뀔 때만) */
+:root .kp-fade {
+  animation: kp-fade var(--t-tab) var(--ease) both;
+}
+@keyframes kp-fade {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+/* 상세 패널 내용 교체 */
+:root .kp-slide {
+  animation: kp-slide var(--t-panel) var(--ease) both;
+}
+@keyframes kp-slide {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 이미지: 다 불러오기 전엔 자리 배경색이 플레이스홀더, 불러오면 페이드인 */
+:root img {
+  transition: opacity 300ms var(--ease);
+}
+:root img.kp-img-wait {
+  opacity: 0;
+}
+
+/* 차트: 선이 그려지며 등장 (path 에 pathLength="1" + .kp-draw) */
+:root .kp-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: kp-draw var(--t-chart) var(--ease) forwards;
+}
+@keyframes kp-draw {
+  to { stroke-dashoffset: 0; }
+}
+:root .kp-pop {
+  animation: kp-fade 300ms var(--ease) both;
+  animation-delay: 450ms;
+}
+/* 차트 툴팁 */
+:root .kp-tip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: rgba(34, 29, 27, 0.92);
+  color: #fff;
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(34, 29, 27, 0.18);
+  animation: kp-fade 150ms var(--ease) both;
+}
+:root .kp-tip b {
+  font-weight: 700;
+}
+
+/* 토스트: 오른쪽 아래에서 살짝 올라와 몇 초 뒤 사라짐 · 성공/주의/오류 구분 */
+.kp-toasts {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.kp-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 48px));
+  padding: 11px 10px 11px 14px;
+  border-radius: 10px;
+  background: rgba(34, 29, 27, 0.94);
+  color: #fff;
+  font: 500 13.5px 'Noto Sans KR', sans-serif;
+  line-height: 1.5;
+  box-shadow: 0 10px 28px rgba(34, 29, 27, 0.22);
+  animation: kp-toast-in 240ms var(--ease) both;
+}
+.kp-toast.out {
+  animation: kp-toast-out 200ms var(--ease) both;
+}
+.kp-toast-i {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: #6fa286;
+  color: #fff;
+}
+.kp-toast.warn .kp-toast-i {
+  background: #c79a3c;
+}
+.kp-toast.error .kp-toast-i {
+  background: #c25a55;
+}
+.kp-toast-x {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.kp-toast-x:hover {
+  color: #fff;
+}
+@keyframes kp-toast-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes kp-toast-out {
+  to { opacity: 0; transform: translateY(6px); }
+}
+
+/* 빈 상태 */
+:root .kp-empty {
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+:root .kp-empty b {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14.5px;
+  color: var(--ink);
+}
+
+/* 움직임 줄이기 설정: 모든 전환·애니메이션을 끔 */
+@media (prefers-reduced-motion: reduce) {
+  :root *,
+  :root *::before,
+  :root *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   좌측 사이드바: 스크롤해도 화면에 고정, 메뉴가 넘치면 내부 스크롤
+   ───────────────────────────────────────────────────────────── */
+.kp-nav {
+  position: sticky;
+  top: 0;
+  height: calc(100vh / 0.85); /* html zoom 0.85 보정: 화면 높이를 꽉 채움 */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 44px 16px 28px 0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  color: #4a3f3b;
+  /* 은은한 반투명 화이트 표면 */
+  background: rgba(255, 255, 255, 0.46);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  backdrop-filter: blur(16px) saturate(1.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 1px 0 0 rgba(110, 80, 70, 0.08);
+  scrollbar-width: thin;
+}
+.kp-nav-logo {
+  padding: 0 0 44px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.kp-nav-logo img {
+  width: 132px;
+  height: auto;
+  display: block;
+}
+.kp-nav-logo span {
+  font-size: 11px;
+  color: #6b605b;
+  letter-spacing: 0.1em;
+}
+.kp-nav-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 활성 표시: 흰 배경 + 왼쪽 와인색 선, 메뉴 사이를 이동 */
+.kp-nav-mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 54px;
+  border-radius: 0 28px 28px 0;
+  background: #fffefd;
+  box-shadow: 0 1px 2px rgba(34, 29, 27, 0.05), 0 0 0 1px rgba(110, 80, 70, 0.06);
+  pointer-events: none;
+}
+.kp-nav-mark::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--wine);
+}
+.kp-nav-mark.moving {
+  transition: transform var(--t-panel) var(--ease);
+}
+.kp-nav-item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 54px;
+  box-sizing: border-box;
+  padding: 0 18px 0 28px;
+  border-radius: 0 28px 28px 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: #4a3f3b;
+  text-decoration: none;
+  transition: background-color var(--t-hover) var(--ease), color var(--t-hover) var(--ease);
+}
+.kp-nav-item:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: #221d1b;
+  text-decoration: none;
+}
+.kp-nav-item.on {
+  font-weight: 600;
+  color: #221d1b;
+}
+.kp-nav-item.on:hover {
+  background: transparent;
+}
+.kp-nav-ico {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color var(--t-hover) var(--ease);
+}
+.kp-nav-item.on .kp-nav-ico {
+  background: #f9e8e5;
+}
+.kp-nav-card {
+  margin: 56px 0 0 16px;
+  padding: 22px 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(110, 80, 70, 0.08);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #4a3f3b;
+  position: relative;
+  min-height: 112px;
+  box-sizing: border-box;
+  flex: none;
+}
+.kp-nav-go {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--wine);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--t-hover) var(--ease), transform var(--t-press) var(--ease);
+}
+.kp-nav-go:hover {
+  background: var(--wine-dark);
+}
+.kp-nav-go:active {
+  transform: scale(0.94);
+}
+/* 작은 화면: 사이드바가 위로 올라가므로 고정하지 않음 */
+@media (max-width: 900px) {
+  .kp-nav {
+    position: static;
+    height: auto;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   상단 헤더: 스크롤해도 고정, 스크롤되면 배경·경계선이 생김
+   ───────────────────────────────────────────────────────────── */
+.kp-top {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  transition: background-color var(--t-panel) var(--ease), box-shadow var(--t-panel) var(--ease),
+    height var(--t-panel) var(--ease);
+}
+.kp-top.scrolled {
+  background: rgba(245, 240, 235, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: 0 1px 0 rgba(110, 80, 70, 0.12);
+}

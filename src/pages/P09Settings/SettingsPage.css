@@ -1,43 +1,46 @@
-body{margin:0;background:linear-gradient(135deg,#FFFFFF 0%,#FCF7F5 100%);background-attachment:fixed;color:#2F2826;font-family:'Noto Sans KR',system-ui,sans-serif;font-size:14px;line-height:1.6;letter-spacing:-0.01em;word-break:keep-all;text-wrap:pretty}
+body{margin:0;background:linear-gradient(135deg,#FFFFFF 0%,#FCF7F5 100%);background-attachment:fixed;color:#221D1B;font-family:'Noto Sans KR',system-ui,sans-serif;font-size:14px;line-height:1.6;letter-spacing:-0.01em;word-break:keep-all;text-wrap:pretty}
 h1,h2,h3,p,dl{margin:0}
 .num{font-variant-numeric:tabular-nums}
 .st-wrap{padding:28px 32px 56px 50px;max-width:1280px;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
-.st-h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;color:#2F2826}
-.st-sub{font-size:13.5px;color:#7A6D68;margin-top:4px}
-.st-meta{font-size:12px;color:#9A8D88;line-height:1.6}
-.st-card{background:#FFFFFF;border:1px solid #F1E4E0;border-radius:24px;box-shadow:0 6px 22px rgba(160,90,90,.08);padding:26px 30px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;scroll-margin-top:12px}
-.st-card h2{font-size:17px;font-weight:600;color:#2F2826}
-.st-note{padding:12px 16px;border-radius:14px;background:#FBEFED;color:#6D434B;font-size:12.5px;line-height:1.6}
+.st-h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;color:#221D1B}
+.st-sub{font-size:13.5px;color:#6B605B;margin-top:4px}
+.st-meta{font-size:12px;color:#6B605B;line-height:1.6}
+.st-card{background:#FFFFFF;border:1px solid #F1E4E0;border-radius:10px;box-shadow:0 6px 22px rgba(160,90,90,.08);padding:26px 30px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;scroll-margin-top:12px}
+.st-card h2{font-size:17px;font-weight:600;color:#221D1B}
+.st-note{padding:12px 16px;border-radius:14px;background:#FBEFED;color:#683945;font-size:12.5px;line-height:1.6}
 .st-nav{display:flex;flex-wrap:wrap;gap:8px}
-.st-nav a{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:#F8EDEA;color:#5A4F4B;font-size:13px}
-.st-nav a:hover{background:#85505A;color:#fff;text-decoration:none}
+.st-nav a{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:#F8EDEA;color:#4A3F3B;font-size:13px}
+.st-nav a:hover{background:#7A4450;color:#fff;text-decoration:none}
 .st-grid{display:flex;flex-wrap:wrap;gap:16px}
 .st-field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px;min-width:0}
 .st-lbl{font-size:12.5px;font-weight:600;color:#3E3532}
-.st-fld{box-sizing:border-box;width:100%;min-height:40px;padding:0 12px;border:1px solid #EBD9D5;border-radius:12px;background:#fff;font:400 13.5px 'Noto Sans KR',sans-serif;color:#2F2826}
-.st-fld:focus{outline:2px solid #85505A;outline-offset:-1px}
-.st-fld[disabled],.st-fld[readonly]{background:#FBF6F4;color:#7A6D68}
-.st-btn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;border-radius:999px;background:#FFFDFB;border:1px solid #EBD9D5;font:500 13px 'Noto Sans KR',sans-serif;color:#2F2826;white-space:nowrap;cursor:pointer}
+.st-fld{box-sizing:border-box;width:100%;min-height:40px;padding:0 12px;border:1px solid #EBD9D5;border-radius:12px;background:#fff;font:400 13.5px 'Noto Sans KR',sans-serif;color:#221D1B}
+.st-fld:focus{outline:2px solid #7A4450;outline-offset:-1px}
+.st-fld[disabled],.st-fld[readonly]{background:#FBF6F4;color:#6B605B}
+.st-btn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;border-radius:999px;background:#FFFDFB;border:1px solid #EBD9D5;font:500 13px 'Noto Sans KR',sans-serif;color:#221D1B;white-space:nowrap;cursor:pointer}
 .st-btn:hover{background:#F8EDEA}
-.st-btn.p{background:#85505A;border-color:#85505A;color:#fff}
-.st-btn.p:hover{background:#6D434B}
-.st-btn[disabled]{background:#F3EEEE;border-color:#F3EEEE;color:#A39B97;cursor:default}
+.st-btn.p{background:#7A4450;border-color:#7A4450;color:#fff}
+.st-btn.p:hover{background:#683945}
+.st-btn[disabled]{background:#F3EEEE;border-color:#F3EEEE;color:#6B605B;cursor:default}
 .st-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 0;border-top:1px solid #F1E4E0}
 .st-row:first-of-type{border-top:0}
 .st-row .grow{flex:1 1 200px;min-width:0}
-.st-row .nm{font-weight:600;color:#2F2826}
+.st-row .nm{font-weight:600;color:#221D1B}
 .st-time{width:132px;min-height:38px;padding:0 10px;border:1px solid #EBD9D5;border-radius:10px;font:400 13px 'Noto Sans KR',sans-serif;box-sizing:border-box}
 .st-chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#4A403C;cursor:pointer}
-.st-chk input{accent-color:#85505A;width:16px;height:16px}
-.st-tag{display:inline-flex;align-items:center;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap;background:#F9EBE8;color:#6D434B}
+.st-chk input{accent-color:#7A4450;width:16px;height:16px}
+.st-tag{display:inline-flex;align-items:center;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap;background:#F9EBE8;color:#683945}
 .st-tag.w{background:#F3E5E7}
 .st-seg{display:inline-flex;padding:3px;border-radius:999px;background:#F8EDEA}
-.st-seg button{border:0;background:transparent;height:30px;padding:0 14px;border-radius:999px;font:400 12.5px 'Noto Sans KR',sans-serif;color:#5A4F4B;cursor:pointer}
-.st-seg button[aria-pressed="true"]{background:#85505A;color:#fff;font-weight:500}
+.st-seg button{border:0;background:transparent;height:30px;padding:0 14px;border-radius:999px;font:400 12.5px 'Noto Sans KR',sans-serif;color:#4A3F3B;cursor:pointer}
+.st-seg button[aria-pressed="true"]{background:#7A4450;color:#fff;font-weight:500}
 .st-sw{flex:none;position:relative;width:40px;height:22px;padding:0;border:0;border-radius:11px;cursor:pointer}
 .st-sw i{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
-.st-cat{font-size:13px;font-weight:600;color:#85505A;padding:14px 0 4px}
+.st-cat{font-size:13px;font-weight:600;color:#7A4450;padding:14px 0 4px}
 .st-def{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px solid #F1E4E0}
 .st-def:first-of-type{border-top:0}
 .st-savebar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:12px}
 .st-time[type="number"]{width:84px}
+
+/* 문서형 화면: 카드 대신 여백과 구분선으로 섹션을 나눔 (카드 속 카드 방지) */
+:root .st-card{background:transparent;border:0;border-top:1px solid #E3D9D1;border-radius:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:26px 0 8px}
