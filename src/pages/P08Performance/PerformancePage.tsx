@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AppLink } from '@/components/common/AppLink';
 import { PinGate } from '@/components/common/PinGate';
+import { CountUp } from '@/components/common/CountUp';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import styleText from './PerformancePage.css?inline';
@@ -41,9 +42,28 @@ const ACC = [
 
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 1000) / 10 : 0);
 const won = (n: number) => n.toLocaleString() + '원';
+const unit = (u: string) => (n: number) => n + u;
+
+// 막대: 처음 진입 시 0 → 값으로 한 번 차오르고, 값이 바뀌면 transition 으로 이동. hover 시 정확한 수치 툴팁.
+function Bar(props: { w: number; color: string; tip: ReactNode; grown: boolean; show: boolean }) {
+  const w = Math.max(0, Math.min(100, props.w));
+  return (
+    <span className="pf-barwrap">
+      <span className="pf-bar"><i style={{ width: props.grown ? `${w}%` : '0%', background: props.color }} /></span>
+      {props.show ? <span className="kp-tip" style={{ left: `${Math.max(6, Math.min(94, w))}%`, top: 0 }}>{props.tip}</span> : null}
+    </span>
+  );
+}
 
 function Body() {
   const [sel, setSel] = useState('all');
+  const [grown, setGrown] = useState(false);
+  const [hover, setHover] = useState('');
+  useEffect(() => {
+    let r2 = 0;
+    const r1 = requestAnimationFrame(() => { r2 = requestAnimationFrame(() => setGrown(true)); });
+    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); };
+  }, []);
   const list = sel === 'all' ? CAMPS : CAMPS.filter((x) => x.id === sel);
   const sum = (k: keyof Camp) => list.reduce((a, x) => a + (x[k] as number), 0);
   const sent = sum('sent');
@@ -58,7 +78,7 @@ function Body() {
     { label: '발송', n: sent, c: '#D9AFA6' },
     { label: '도달', n: reach, c: '#CC9A9E' },
     { label: '재예약', n: rebook, c: '#A9707A' },
-    { label: '재방문', n: visit, c: '#85505A' },
+    { label: '재방문', n: visit, c: '#7A4450' },
   ];
   const sendRate = pct(visit, sent);
   const ctrlRate = pct(ctrlVisit, ctrlN);
@@ -81,11 +101,11 @@ function Body() {
         </div>
       </div>
 
-      <section className="pf-kpis" aria-label="성과 요약">
-        <div className="pf-kpi"><span>발송</span><b className="num">{sent}건</b><em>가상 발송 기준 · 캠페인 {list.length}개</em></div>
-        <div className="pf-kpi"><span>재예약</span><b className="num" style={{ color: '#85505A' }}>{rebook}건</b><em className="num">발송 대비 {pct(rebook, sent)}%</em></div>
-        <div className="pf-kpi"><span>재방문</span><b className="num">{visit}건</b><em className="num">발송 대비 {sendRate}%</em></div>
-        <div className="pf-kpi"><span>연결 매출</span><b className="num">{won(sales)}</b><em>귀속된 재방문 결제 합계</em></div>
+      <section className="pf-kpis pf-card" aria-label="성과 요약">
+        <div className="pf-kpi"><span>발송</span><b className="num"><CountUp value={sent} format={unit('건')} /></b><em>가상 발송 기준 · 캠페인 {list.length}개</em></div>
+        <div className="pf-kpi"><span>재예약</span><b className="num" style={{ color: '#7A4450' }}><CountUp value={rebook} format={unit('건')} /></b><em className="num">발송 대비 {pct(rebook, sent)}%</em></div>
+        <div className="pf-kpi"><span>재방문</span><b className="num"><CountUp value={visit} format={unit('건')} /></b><em className="num">발송 대비 {sendRate}%</em></div>
+        <div className="pf-kpi"><span>연결 매출</span><b className="num"><CountUp value={sales} format={won} /></b><em>귀속된 재방문 결제 합계</em></div>
       </section>
 
       <div className="pf-two">
@@ -96,10 +116,10 @@ function Body() {
           </div>
           <div>
             {funnel.map((f) => (
-              <div className="pf-frow" key={f.label}>
-                <span style={{ fontSize: 13, color: '#5A4F4B' }}>{f.label}</span>
-                <span className="pf-bar"><i style={{ width: `${pct(f.n, sent)}%`, background: f.c }} /></span>
-                <b className="num" style={{ textAlign: 'right' }}>{f.n}건</b>
+              <div className="pf-frow" key={f.label} onMouseEnter={() => setHover('f' + f.label)} onMouseLeave={() => setHover('')}>
+                <span style={{ fontSize: 13, color: '#4A3F3B' }}>{f.label}</span>
+                <Bar w={pct(f.n, sent)} color={f.c} grown={grown} show={hover === 'f' + f.label} tip={<>{f.label} <b>{f.n}건</b> · 발송 대비 {pct(f.n, sent)}%</>} />
+                <b className="num" style={{ textAlign: 'right' }}><CountUp value={f.n} format={unit('건')} /></b>
                 <span className="num pf-note" style={{ textAlign: 'right' }}>{pct(f.n, sent)}%</span>
               </div>
             ))}
@@ -129,9 +149,9 @@ function Body() {
             <span className="pf-note">발송군과 발송하지 않은 대조군의 주기 내 재방문율 비교</span>
           </div>
           <div className="pf-cmp">
-            <div><span>발송군</span><b className="num">{sendRate}%</b><span className="num">{visit}/{sent}명</span></div>
-            <div><span>대조군</span><b className="num">{ctrlRate}%</b><span className="num">{ctrlVisit}/{ctrlN}명</span></div>
-            <div><span>차이</span><b className="num" style={{ color: diff >= 0 ? '#85505A' : '#8F2F2F' }}>{diff >= 0 ? '+' : ''}{diff}%p</b><span>발송군 − 대조군</span></div>
+            <div><span>발송군</span><b className="num"><CountUp value={sendRate} decimals={1} format={unit('%')} /></b><span className="num">{visit}/{sent}명</span></div>
+            <div><span>대조군</span><b className="num"><CountUp value={ctrlRate} decimals={1} format={unit('%')} /></b><span className="num">{ctrlVisit}/{ctrlN}명</span></div>
+            <div><span>차이</span><b className="num" style={{ color: diff >= 0 ? '#7A4450' : '#8F2F2F' }}><CountUp value={diff} decimals={1} format={(n) => (n >= 0 ? '+' : '') + n + '%p'} /></b><span>발송군 − 대조군</span></div>
           </div>
           <span className="pf-note">대조군은 대상 중 무작위로 발송하지 않은 고객이에요. 인원이 적어 차이를 단정하기는 어려워요.</span>
         </section>
@@ -160,9 +180,9 @@ function Body() {
         </div>
         <div>
           {CAT_RATE.map((r) => (
-            <div className="pf-frow" key={r.cat} style={{ gridTemplateColumns: '110px 1fr 60px 64px' }}>
-              <span style={{ fontSize: 13, color: '#5A4F4B' }}>{r.cat}</span>
-              <span className="pf-bar"><i style={{ width: `${r.rate}%`, background: '#85505A' }} /></span>
+            <div className="pf-frow" key={r.cat} style={{ gridTemplateColumns: '110px 1fr 60px 64px' }} onMouseEnter={() => setHover('r' + r.cat)} onMouseLeave={() => setHover('')}>
+              <span style={{ fontSize: 13, color: '#4A3F3B' }}>{r.cat}</span>
+              <Bar w={r.rate} color="#7A4450" grown={grown} show={hover === 'r' + r.cat} tip={<>{r.cat} <b>{r.rate}%</b> · {r.n}명 기준</>} />
               <b className="num" style={{ textAlign: 'right' }}>{r.rate}%</b>
               <span className="num pf-note" style={{ textAlign: 'right' }}>{r.n}명</span>
             </div>
@@ -180,10 +200,10 @@ function Body() {
             <tbody>
               {CAMPS.map((x) => (
                 <tr key={x.id}>
-                  <td><AppLink href="/campaigns" style={{ color: '#2F2826', fontWeight: 600 }}>{x.name}</AppLink><div className="pf-note">{x.date} 발송 · {x.cat}</div></td>
+                  <td><AppLink href="/campaigns" style={{ color: '#221D1B', fontWeight: 600 }}>{x.name}</AppLink><div className="pf-note">{x.date} 발송 · {x.cat}</div></td>
                   <td className="num">{x.sent}</td>
                   <td className="num">{x.reach}</td>
-                  <td className="num" style={{ color: '#85505A', fontWeight: 600 }}>{x.rebook} ({pct(x.rebook, x.sent)}%)</td>
+                  <td className="num" style={{ color: '#7A4450', fontWeight: 600 }}>{x.rebook} ({pct(x.rebook, x.sent)}%)</td>
                   <td className="num">{x.visit}</td>
                   <td className="num">{won(x.sales)}</td>
                 </tr>
@@ -203,7 +223,7 @@ export default function PerformancePage() {
   useStyleSheet('PerformancePage', styleText);
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1300px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="performance" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>

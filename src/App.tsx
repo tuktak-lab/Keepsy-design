@@ -1,5 +1,11 @@
 import { AppRoutes } from '@/routes';
+import { ToastHost } from '@/components/common/Toast';
 
 export default function App() {
-  return <AppRoutes />;
+  return (
+    <>
+      <AppRoutes />
+      <ToastHost />
+    </>
+  );
 }

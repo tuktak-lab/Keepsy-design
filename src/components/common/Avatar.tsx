@@ -54,7 +54,7 @@ export function Avatar(props: { who?: string; size?: any }) {
             height: '100%',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#5B5552',
+            color: '#4A3F3B',
             font: `700 ${v.fs}px 'Noto Sans KR', sans-serif`,
           }}
         >

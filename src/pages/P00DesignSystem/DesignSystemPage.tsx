@@ -18,9 +18,9 @@ export default function DesignSystemPage() {
     });
     const palettes = [
       P('중립 · 글자와 선', [
-        ['Ink', '#1F1B1A', '제목, 본문, 숫자'],
-        ['Text 2', '#5B5552', '보조 설명'],
-        ['Meta', '#77706C', '날짜, 표 헤더'],
+        ['Ink', '#221D1B', '제목, 본문, 숫자'],
+        ['Text 2', '#4A3F3B', '보조 설명'],
+        ['Meta', '#6B605B', '날짜, 표 헤더'],
         ['Line strong', '#EBD9D5', '버튼·입력 테두리'],
         ['Line', '#F1E4E0', '카드 테두리·영역 구분'],
         ['Line soft', '#F6EDEA', '표 행 구분'],
@@ -28,31 +28,31 @@ export default function DesignSystemPage() {
         ['Sidebar', '#F4EBE6', '내비게이션(베이지)'],
       ]),
       P('포인트 · Berry', [
-        ['Berry', '#85505A', '주요 버튼, 활성 탭'],
-        ['Berry dark', '#6D434B', 'Hover'],
+        ['Berry', '#7A4450', '주요 버튼, 활성 탭'],
+        ['Berry dark', '#683945', 'Hover'],
         ['Rose', '#C99AA1', '데이터 보조'],
         ['Berry tint', '#F8F1F2', '선택된 행'],
         ['Select', '#F3E5E7', '선택 버튼'],
       ]),
       P('상태', [
-        ['예정', '#5B5552', 'bg #F3EEEE'],
+        ['예정', '#4A3F3B', 'bg #F3EEEE'],
         ['주기 도래', '#6B4509', 'bg #F5EBD3'],
         ['이탈 신호', '#8F2F2F', 'bg #F8E3E1'],
-        ['장기 미방문', '#5B5552', 'bg #ECE5E1'],
+        ['장기 미방문', '#4A3F3B', 'bg #ECE5E1'],
         ['예약 확정', '#2F3F55', 'bg #E1E6EE'],
-        ['재방문 완료', '#85505A', '데이터 결과'],
+        ['재방문 완료', '#7A4450', '데이터 결과'],
       ]),
     ];
     const T: any = [
-      ['화면 제목', '고객 목록', 26, 700, '-0.03em', '#1F1B1A'],
-      ['큰 숫자', '486,000원', 30, 500, '-0.025em', '#1F1B1A'],
-      ['강조 헤드라인', '28일의 리듬, 7일의 공백', 20, 700, '-0.025em', '#1F1B1A'],
-      ['섹션 제목', '지금 관리가 필요한 고객', 15.5, 700, '-0.02em', '#1F1B1A'],
-      ['이름 · 행 제목', '김민지', 14, 600, '-0.01em', '#1F1B1A'],
-      ['본문', '짧은 길이와 자연스러운 핑크를 선호해요.', 13.5, 400, '-0.01em', '#1F1B1A'],
-      ['보조 설명', '35일 경과 / 평균 28일 / 예정 예약 없음', 13, 400, '-0.01em', '#5B5552'],
-      ['메타', '11.21 14:00 · 서연', 12, 400, '-0.01em', '#77706C'],
-      ['표 헤더', '재방문 예상 / 예약', 12, 500, '-0.01em', '#77706C'],
+      ['화면 제목', '고객 목록', 26, 700, '-0.03em', '#221D1B'],
+      ['큰 숫자', '486,000원', 30, 500, '-0.025em', '#221D1B'],
+      ['강조 헤드라인', '28일의 리듬, 7일의 공백', 20, 700, '-0.025em', '#221D1B'],
+      ['섹션 제목', '지금 관리가 필요한 고객', 15.5, 700, '-0.02em', '#221D1B'],
+      ['이름 · 행 제목', '김민지', 14, 600, '-0.01em', '#221D1B'],
+      ['본문', '짧은 길이와 자연스러운 핑크를 선호해요.', 13.5, 400, '-0.01em', '#221D1B'],
+      ['보조 설명', '35일 경과 / 평균 28일 / 예정 예약 없음', 13, 400, '-0.01em', '#4A3F3B'],
+      ['메타', '11.21 14:00 · 서연', 12, 400, '-0.01em', '#6B605B'],
+      ['표 헤더', '재방문 예상 / 예약', 12, 500, '-0.01em', '#6B605B'],
     ];
     const types = T.map(([role, sample, size, w, ls, c]: any) => ({
       role,
@@ -104,7 +104,7 @@ export default function DesignSystemPage() {
       {
         label: '예정',
         bg: '#F3EEEE',
-        fg: '#5B5552',
+        fg: '#4A3F3B',
       },
       {
         label: '주기 도래',
@@ -114,7 +114,7 @@ export default function DesignSystemPage() {
       {
         label: '장기 미방문',
         bg: '#ECE5E1',
-        fg: '#5B5552',
+        fg: '#4A3F3B',
       },
       {
         label: '이탈 신호',
@@ -134,7 +134,7 @@ export default function DesignSystemPage() {
       {
         label: '발송 완료',
         bg: '#F3E5E7',
-        fg: '#6D434B',
+        fg: '#683945',
       },
     ];
     const blocks = [
@@ -142,8 +142,8 @@ export default function DesignSystemPage() {
         name: '정하린',
         label: '시그니처 펄 · 완료',
         bg: '#F3E5E7',
-        fg: '#6D434B',
-        bar: '#85505A',
+        fg: '#683945',
+        bar: '#7A4450',
       },
       {
         name: '이윤서',
@@ -162,7 +162,7 @@ export default function DesignSystemPage() {
       {
         name: '김민지',
         label: '시그니처 펄 · 선택',
-        bg: '#85505A',
+        bg: '#7A4450',
         fg: '#FFFFFF',
         bar: '#6E2A38',
       },
@@ -174,7 +174,7 @@ export default function DesignSystemPage() {
         last: '2026.10.24',
         seg: '예정',
         cbg: '#F3EEEE',
-        cfg: '#5B5552',
+        cfg: '#4A3F3B',
         next: '11.21 14:00',
         bg: '#F8F1F2',
       },
@@ -200,20 +200,20 @@ export default function DesignSystemPage() {
         label: '재예약',
         n: 10,
         w: 20.8,
-        c: '#85505A',
+        c: '#7A4450',
       },
       {
         label: '실제 재방문',
         n: 8,
         w: 16.7,
-        c: '#85505A',
+        c: '#7A4450',
       },
     ];
     const nav = [
-      { label: '대시보드', bg: 'transparent', fg: '#5A4F4B', w: 400 },
-      { label: '고객 목록', bg: '#FFFDFB', fg: '#2F2826', w: 600 },
-      { label: '예약 관리', bg: 'transparent', fg: '#5A4F4B', w: 400 },
-      { label: '인사이트', bg: 'transparent', fg: '#5A4F4B', w: 400 },
+      { label: '대시보드', bg: 'transparent', fg: '#4A3F3B', w: 400 },
+      { label: '고객 목록', bg: '#FFFDFB', fg: '#221D1B', w: 600 },
+      { label: '예약 관리', bg: 'transparent', fg: '#4A3F3B', w: 400 },
+      { label: '인사이트', bg: 'transparent', fg: '#4A3F3B', w: 400 },
     ];
     const photos = [
       {
@@ -325,7 +325,7 @@ export default function DesignSystemPage() {
               gridTemplateColumns: '140px 1fr 200px',
               gap: '16px',
               paddingBottom: '8px',
-              borderBottom: '1px solid #1F1B1A',
+              borderBottom: '1px solid #221D1B',
             }}
             className="meta"
           >
@@ -374,7 +374,7 @@ export default function DesignSystemPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <span className="grp">섹션 제목 아래</span>
-              <div style={{ paddingBottom: '8px', borderBottom: '1px solid #1F1B1A', fontWeight: '700' }}>
+              <div style={{ paddingBottom: '8px', borderBottom: '1px solid #221D1B', fontWeight: '700' }}>
                 캠페인별 성과
               </div>
               <span className="meta">1px Ink · 표와 목록의 시작</span>
@@ -407,7 +407,7 @@ export default function DesignSystemPage() {
                     display: 'block',
                     width: `${r.w}px`,
                     height: `${r.h}px`,
-                    border: '1px solid #85505A',
+                    border: '1px solid #7A4450',
                     borderRadius: r.r,
                     background: '#F8F1F2',
                   }}
@@ -439,17 +439,17 @@ export default function DesignSystemPage() {
                 <span className="btn btn-p">변경사항 저장</span>
               </div>
               <div>
-                <span className="btn btn-p" style={{ background: '#6D434B', borderColor: '#6D434B' }}>
+                <span className="btn btn-p" style={{ background: '#683945', borderColor: '#683945' }}>
                   변경사항 저장
                 </span>
               </div>
               <div>
-                <span className="btn btn-p" style={{ outline: '2px solid #85505A', outlineOffset: '2px' }}>
+                <span className="btn btn-p" style={{ outline: '2px solid #7A4450', outlineOffset: '2px' }}>
                   변경사항 저장
                 </span>
               </div>
               <div>
-                <span className="btn" style={{ background: '#F3EEEE', borderColor: '#F3EEEE', color: '#A39B97' }}>
+                <span className="btn" style={{ background: '#F3EEEE', borderColor: '#F3EEEE', color: '#6B605B' }}>
                   변경사항 저장
                 </span>
               </div>
@@ -464,12 +464,12 @@ export default function DesignSystemPage() {
                 </span>
               </div>
               <div>
-                <span className="btn" style={{ outline: '2px solid #85505A', outlineOffset: '2px' }}>
+                <span className="btn" style={{ outline: '2px solid #7A4450', outlineOffset: '2px' }}>
                   고객 확인
                 </span>
               </div>
               <div>
-                <span className="btn" style={{ background: '#F3EEEE', borderColor: '#F3EEEE', color: '#A39B97' }}>
+                <span className="btn" style={{ background: '#F3EEEE', borderColor: '#F3EEEE', color: '#6B605B' }}>
                   고객 확인
                 </span>
               </div>
@@ -479,7 +479,7 @@ export default function DesignSystemPage() {
             <span className="grp">입력 · 선택</span>{' '}
             <div className="state">
               <div>
-                <span className="fld" style={{ color: '#A39B97' }}>
+                <span className="fld" style={{ color: '#6B605B' }}>
                   이름, 연락처 또는 취향 태그 검색
                 </span>
               </div>
@@ -489,12 +489,12 @@ export default function DesignSystemPage() {
                 </span>
               </div>
               <div>
-                <span className="fld" style={{ borderColor: '#85505A', boxShadow: 'inset 0 0 0 1px #85505A' }}>
+                <span className="fld" style={{ borderColor: '#7A4450', boxShadow: 'inset 0 0 0 1px #7A4450' }}>
                   네일무드 성수
                 </span>
               </div>
               <div>
-                <span className="fld" style={{ background: '#F6F4F1', borderColor: '#EEEAE5', color: '#A39B97' }}>
+                <span className="fld" style={{ background: '#F6F4F1', borderColor: '#EEEAE5', color: '#6B605B' }}>
                   마지막 이용 후 24개월
                 </span>
               </div>
@@ -551,15 +551,15 @@ export default function DesignSystemPage() {
                 <span
                   style={{
                     padding: '8px 14px',
-                    borderBottom: '2px solid #85505A',
+                    borderBottom: '2px solid #7A4450',
                     marginBottom: '-1px',
                     fontWeight: '700',
                   }}
                 >
                   전체 248
                 </span>
-                <span style={{ padding: '8px 14px', color: '#5B5552' }}>예정 198</span>
-                <span style={{ padding: '8px 14px', color: '#5B5552' }}>이탈 신호 22</span>
+                <span style={{ padding: '8px 14px', color: '#4A3F3B' }}>예정 198</span>
+                <span style={{ padding: '8px 14px', color: '#4A3F3B' }}>이탈 신호 22</span>
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -573,7 +573,7 @@ export default function DesignSystemPage() {
                       width: '40px',
                       height: '22px',
                       borderRadius: '11px',
-                      background: '#85505A',
+                      background: '#7A4450',
                     }}
                   >
                     <span
@@ -621,7 +621,7 @@ export default function DesignSystemPage() {
               <div style={{ display: 'flex', gap: '8px' }}>
                 <span
                   className="btn"
-                  style={{ background: '#F3E5E7', borderColor: '#85505A', color: '#6E2A38', fontWeight: '700' }}
+                  style={{ background: '#F3E5E7', borderColor: '#7A4450', color: '#6E2A38', fontWeight: '700' }}
                 >
                   네일
                 </span>
@@ -650,10 +650,10 @@ export default function DesignSystemPage() {
                 gap: '14px',
                 padding: '8px',
                 background: '#F6F4F1',
-                borderTop: '1px solid #1F1B1A',
+                borderTop: '1px solid #221D1B',
                 borderBottom: '1px solid #E7E3DE',
                 fontSize: '12px',
-                color: '#77706C',
+                color: '#6B605B',
               }}
             >
               <span>고객</span>
@@ -722,7 +722,7 @@ export default function DesignSystemPage() {
                       fontWeight: '500',
                       letterSpacing: '-0.025em',
                       lineHeight: '1.25',
-                      color: '#85505A',
+                      color: '#7A4450',
                     }}
                   >
                     20.8%
@@ -828,7 +828,7 @@ export default function DesignSystemPage() {
                 }}
               >
                 <span className="sub">기본</span>
-                <span className="mono">#F6EEEA→#F1E5DF 바탕 · 글자 #5A4F4B · 400</span>
+                <span className="mono">#F6EEEA→#F1E5DF 바탕 · 글자 #4A3F3B · 400</span>
               </div>
               <div
                 style={{
@@ -840,7 +840,7 @@ export default function DesignSystemPage() {
                 }}
               >
                 <span className="sub">활성</span>
-                <span className="mono">#FFFDFB 바탕 · 왼쪽 #85505A 바 · 글자 #2F2826 · 600</span>
+                <span className="mono">#FFFDFB 바탕 · 왼쪽 #7A4450 바 · 글자 #221D1B · 600</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '12px', padding: '10px 0' }}>
                 <span className="sub">상단 바</span>

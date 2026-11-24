@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { AppLink } from '@/components/common/AppLink';
 import { PinGate } from '@/components/common/PinGate';
+import { CountUp } from '@/components/common/CountUp';
+import { toast } from '@/components/common/Toast';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import styleText from './CampaignsPage.css?inline';
@@ -22,6 +24,17 @@ const CATS = ['젤 네일', '네일 케어', '속눈썹 연장', '패디큐어']
 const STATUSES: Status[] = ['주기 도래', '이탈 신호', '장기 미방문'];
 const SHOP = '네일무드 성수';
 const UNIT_COST = 20;
+const won = (n: number) => n.toLocaleString() + '원';
+const unit = (u: string) => (n: number) => n + u;
+
+// 열고 닫히는 안내 영역: 높이를 grid-template-rows 0fr→1fr 로 부드럽게 바꿔 레이아웃 점프를 줄입니다.
+function Collapse(props: { open: boolean; children: ReactNode }) {
+  return (
+    <div className={'cp-col' + (props.open ? ' on' : '')} aria-hidden={!props.open}>
+      <div><div className="cp-col-in">{props.children}</div></div>
+    </div>
+  );
+}
 
 const c = (name: string, cat: string, status: Status, o: Partial<Cust> = {}): Cust => ({
   name,
@@ -74,8 +87,8 @@ const INIT_CAMPS: Camp[] = [
 ];
 
 const ST: Record<string, [string, string]> = {
-  '예약 발송': ['#F1E4E0', '#6D434B'],
-  '발송 완료(가상)': ['#F9EBE8', '#85505A'],
+  '예약 발송': ['#F1E4E0', '#683945'],
+  '발송 완료(가상)': ['#F9EBE8', '#7A4450'],
   '검토 대기': ['#F5EBD3', '#6B4509'],
 };
 
@@ -129,7 +142,12 @@ function Body() {
   };
 
   const send = () => {
-    if (!canSend) return;
+    if (!canSend) {
+      if (!reviewed) toast('검토 체크를 해야 발송할 수 있어요', 'warn');
+      else if (blocked) toast('야간(21시~08시)에는 광고를 즉시 발송할 수 없어요 · 예약 발송을 선택해 주세요', 'warn');
+      else if (sendN <= 0) toast('발송 가능한 고객이 없어요', 'warn');
+      return;
+    }
     const isNow = mode === 'now';
     const nc: Camp = {
       id: 'n' + Date.now(),
@@ -143,6 +161,7 @@ function Body() {
     };
     setCamps((p) => [nc, ...p]);
     setDone(isNow ? `가상 발송했어요. 실제 문자는 나가지 않습니다. (발송 ${sendN}건 · 대조군 ${controlN}명)` : `내일 11:00 예약 발송으로 등록했어요. (발송 ${sendN}건 · 대조군 ${controlN}명)`);
+    toast(isNow ? `가상 발송했어요 · ${sendN}건` : `내일 11:00 예약 발송으로 등록했어요 · ${sendN}건`);
     setReviewed(false);
   };
 
@@ -161,11 +180,11 @@ function Body() {
         </button>
       </div>
 
-      <section className="cp-kpis" aria-label="캠페인 현황">
-        <div className="cp-card cp-kpi"><span>예약 발송</span><b className="num">{camps.filter((x) => x.status === '예약 발송').length}건</b><em>발송 전까지 수정 가능</em></div>
-        <div className="cp-card cp-kpi"><span>이번 달 발송</span><b className="num">{totalSent}건</b><em>가상 발송 기준</em></div>
-        <div className="cp-card cp-kpi"><span>캠페인 수</span><b className="num">{camps.length}건</b><em>예약·완료 포함</em></div>
-        <div className="cp-card cp-kpi"><span>성과 확인</span><b style={{ fontSize: 16, paddingTop: 8 }}><AppLink href="/performance" style={{ color: '#85505A' }}>성과 분석 보기 →</AppLink></b><em>귀속 14일 기준</em></div>
+      <section className="cp-kpis cp-card" aria-label="캠페인 현황">
+        <div className="cp-kpi"><span>예약 발송</span><b className="num"><CountUp value={camps.filter((x) => x.status === '예약 발송').length} format={unit('건')} /></b><em>발송 전까지 수정 가능</em></div>
+        <div className="cp-kpi"><span>이번 달 발송</span><b className="num"><CountUp value={totalSent} format={unit('건')} /></b><em>가상 발송 기준</em></div>
+        <div className="cp-kpi"><span>캠페인 수</span><b className="num"><CountUp value={camps.length} format={unit('건')} /></b><em>예약·완료 포함</em></div>
+        <div className="cp-kpi"><span>성과 확인</span><b style={{ fontSize: 16, paddingTop: 8 }}><AppLink href="/performance" style={{ color: '#7A4450' }}>성과 분석 보기 →</AppLink></b><em>귀속 14일 기준</em></div>
       </section>
 
       <div className="cp-grid">
@@ -188,6 +207,7 @@ function Body() {
         </section>
 
         <section className="cp-card cp-main" aria-label="캠페인 상세">
+          <div className="kp-slide cp-main-in" key={sel}>
           {sel === 'new' ? (
             <>
               <div className="cp-step">
@@ -203,14 +223,14 @@ function Body() {
                   ))}
                 </div>
                 <div className="cp-box">
-                  <span style={{ fontWeight: 600 }} className="num">대상 {targets.length}명 → 발송 가능 {sendable.length}명</span>
-                  <span className="cp-note">{cat} 시술 기록이 있고 예측 상태가 {statuses.join(' / ')}인 고객이에요.</span>
+                  <span style={{ fontWeight: 600 }} className="num">대상 <CountUp value={targets.length} duration={300} format={unit('명')} /> → 발송 가능 <CountUp value={sendable.length} duration={300} format={unit('명')} /></span>
+                  <span className="cp-note kp-fade" key={cat + statuses.join()}>{cat} 시술 기록이 있고 예측 상태가 {statuses.join(' / ')}인 고객이에요.</span>
                 </div>
               </div>
 
               <div className="cp-step">
                 <h3><i>2</i>제외 사유</h3>
-                <div className="cp-excl">
+                <div className="cp-excl kp-fade" key={cat + statuses.join() + nightOnly}>
                   <span className="cp-ex">수신 미동의 <b className="num">{ex.consent.length}</b></span>
                   <span className="cp-ex">수신 거부 <b className="num">{ex.optout.length}</b></span>
                   <span className="cp-ex">다음 예약 있음 <b className="num">{ex.next.length}</b></span>
@@ -225,7 +245,7 @@ function Body() {
                 <div className="cp-tpls">
                   {TPLS.map((t) => (
                     <button type="button" className="cp-tpl" key={t.id} aria-pressed={useTpl === t.id} onClick={() => setTpl(t.id)}>
-                      <b>{t.name} {t.id === recId && <span className="cp-chip" style={{ background: '#F1E4E0', color: '#85505A', marginLeft: 4 }}>추천</span>}</b>
+                      <b>{t.name} {t.id === recId && <span className="cp-chip" style={{ background: '#F1E4E0', color: '#7A4450', marginLeft: 4 }}>추천</span>}</b>
                       <span className="cp-note">{t.fits} 고객용{t.id === recId ? ' · 선택한 대상 상태 기준 추천(규칙 기반)' : ''}</span>
                     </button>
                   ))}
@@ -233,7 +253,7 @@ function Body() {
                 <div className="cp-pv">
                   <div className="cp-phone" aria-label="가상 휴대폰 미리보기">
                     <div className="top">가상 휴대폰 · 문자 메시지</div>
-                    <div className="cp-bubble">{fullMsg(pvCust)}</div>
+                    <div className="cp-bubble kp-fade" key={fullMsg(pvCust)}>{fullMsg(pvCust)}</div>
                   </div>
                   <div style={{ flex: '1 1 240px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -257,14 +277,14 @@ function Body() {
               <div className="cp-step">
                 <h3><i>4</i>예상 비용·건수와 대조군</h3>
                 <div className="cp-stats">
-                  <div className="cp-stat"><b className="num">{sendable.length}명</b><span>발송 가능 대상</span></div>
-                  <div className="cp-stat"><b className="num">{controlN}명</b><span>대조군(발송 안 함)</span></div>
-                  <div className="cp-stat"><b className="num">{sendN}건</b><span>예상 발송</span></div>
-                  <div className="cp-stat"><b className="num">{cost.toLocaleString()}원</b><span>예상 비용(건당 {UNIT_COST}원 예시)</span></div>
+                  <div className="cp-stat"><b className="num"><CountUp value={sendable.length} duration={300} format={unit('명')} /></b><span>발송 가능 대상</span></div>
+                  <div className="cp-stat"><b className="num"><CountUp value={controlN} duration={300} format={unit('명')} /></b><span>대조군(발송 안 함)</span></div>
+                  <div className="cp-stat"><b className="num"><CountUp value={sendN} duration={300} format={unit('건')} /></b><span>예상 발송</span></div>
+                  <div className="cp-stat"><b className="num"><CountUp value={cost} duration={300} format={won} /></b><span>예상 비용(건당 {UNIT_COST}원 예시)</span></div>
                 </div>
                 <label style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
                   <span className="cp-lbl">대조군 비율</span>
-                  <input type="range" min={0} max={30} step={5} value={ctrl} onChange={(e) => setCtrl(Number(e.target.value))} style={{ accentColor: '#85505A' }} />
+                  <input type="range" min={0} max={30} step={5} value={ctrl} onChange={(e) => setCtrl(Number(e.target.value))} style={{ accentColor: '#7A4450' }} />
                   <input className="cp-fld num" type="number" min={0} max={30} value={ctrl} onChange={(e) => setCtrl(Math.max(0, Math.min(30, Number(e.target.value) || 0)))} style={{ width: 80 }} />
                   <span className="cp-note">% · 대상 중 일부를 무작위로 골라 발송하지 않고, 성과 분석에서 발송군과 비교해요.</span>
                 </label>
@@ -285,17 +305,18 @@ function Body() {
                     </select>
                   </label>
                   <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
-                    <input type="checkbox" checked={nightOnly} onChange={(e) => { setNightOnly(e.target.checked); setReviewed(false); }} style={{ accentColor: '#85505A' }} />
+                    <input type="checkbox" checked={nightOnly} onChange={(e) => { setNightOnly(e.target.checked); setReviewed(false); }} style={{ accentColor: '#7A4450' }} />
                     야간 광고 수신 동의 고객만 발송
                   </label>
                 </div>
-                {blocked ? (
+                <Collapse open={blocked}>
                   <div className="cp-warn">야간(21시~08시)에는 광고를 즉시 발송할 수 없어요. 예약 발송을 선택하면 다음 날 오전에 보내드려요.
-                    <div style={{ marginTop: 8 }}><button type="button" className="cp-btn" onClick={() => setMode('schedule')}>예약 발송으로 바꾸기</button></div>
+                    <div style={{ marginTop: 8 }}><button type="button" className="cp-btn" tabIndex={blocked ? undefined : -1} onClick={() => setMode('schedule')}>예약 발송으로 바꾸기</button></div>
                   </div>
-                ) : mode === 'schedule' ? (
+                </Collapse>
+                <Collapse open={!blocked && mode === 'schedule'}>
                   <div className="cp-ok">내일 오전 11:00에 발송돼요. 발송 전까지 문구와 대상을 수정할 수 있어요.</div>
-                ) : null}
+                </Collapse>
               </div>
 
               <div className="cp-step">
@@ -304,12 +325,12 @@ function Body() {
                   <input type="checkbox" checked={reviewed} onChange={(e) => setReviewed(e.target.checked)} />
                   <span>원장 등 허용된 스탭이 다른 앱 예약 목록과 대조해, 발송 대상에 이미 예약한 고객이 없음을 확인했어요.</span>
                 </label>
-                {done && <div className="cp-ok">{done}</div>}
+                {done && <div className="cp-ok kp-fade" key={done}>{done}</div>}
                 <div className="cp-btns">
                   <span className="cp-note">MVP는 가상 발송이에요. 실제 문자는 전송되지 않아요.</span>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button type="button" className="cp-btn">임시 저장</button>
-                    <button type="button" className="cp-btn p" disabled={!canSend} onClick={send}>
+                    <button type="button" className="cp-btn p" aria-disabled={!canSend} onClick={send}>
                       {mode === 'now' ? `${sendN}명에게 가상 발송` : `${sendN}명 예약 발송 등록`}
                     </button>
                   </div>
@@ -345,6 +366,7 @@ function Body() {
               </div>
             </>
           ) : null}
+          </div>
         </section>
       </div>
       <p className="cp-foot">마케팅 수신 동의 고객에게만 발송해요. 문구는 규칙·템플릿 기반으로 추천되며 자동 발송되지 않고, 검토 체크가 필요해요. MVP는 가상 발송입니다.</p>
@@ -356,7 +378,7 @@ export default function CampaignsPage() {
   useStyleSheet('CampaignsPage', styleText);
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1100px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="campaigns" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>

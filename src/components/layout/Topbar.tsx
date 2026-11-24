@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // 기능 검색: 키워드로 해당 화면으로 이동합니다 (MVP는 키워드 사전 방식).
@@ -18,6 +18,15 @@ export function Topbar(props: { crumb?: string }) {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [miss, setMiss] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // 스크롤되면 헤더에 배경·경계선을 깔아 아래 콘텐츠와 구분
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 8);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -35,6 +44,7 @@ export function Topbar(props: { crumb?: string }) {
 
   return (
     <header
+      className={'kp-top' + (scrolled ? ' scrolled' : '')}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -45,7 +55,6 @@ export function Topbar(props: { crumb?: string }) {
         fontFamily: "'Noto Sans KR', system-ui, sans-serif",
         fontSize: '14px',
         color: '#3E3532',
-        background: 'transparent',
       }}
     >
       <span style={{ marginRight: 'auto', whiteSpace: 'nowrap' }}>{crumb}</span>
@@ -65,7 +74,7 @@ export function Topbar(props: { crumb?: string }) {
           border: `1px solid ${miss ? '#C98B8B' : '#EBD9D5'}`,
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A8D88" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B605B" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
           <circle cx="11" cy="11" r="7"></circle>
           <path d="M20 20l-4-4"></path>
         </svg>
@@ -89,12 +98,12 @@ export function Topbar(props: { crumb?: string }) {
           border: 0,
           background: 'transparent',
           font: "400 13px 'Noto Sans KR', sans-serif",
-          color: '#6A5D58',
+          color: '#4A3F3B',
           cursor: 'pointer',
         }}
       >
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#3E3532', fontWeight: 500 }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#85505A' }} />
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7A4450' }} />
           근무자 서연
         </span>
         <span style={{ width: '1px', height: '14px', background: '#D9CBC4' }} />
@@ -148,7 +157,7 @@ export function Topbar(props: { crumb?: string }) {
             width: '9px',
             height: '9px',
             borderRadius: '50%',
-            background: '#85505A',
+            background: '#7A4450',
           }}
         />
       </button>

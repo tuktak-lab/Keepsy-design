@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLink } from '@/components/common/AppLink';
 import { Avatar } from '@/components/common/Avatar';
 import { Photo } from '@/components/common/Photo';
+import { toast } from '@/components/common/Toast';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import styleText from './HistoryPage.css?inline';
@@ -25,7 +26,7 @@ export default function HistoryPage() {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1000px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="customers" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: '0', display: 'flex', flexDirection: 'column' }}>
@@ -60,23 +61,23 @@ export default function HistoryPage() {
           <section className="card col" style={{ gap: 12 }}>
             <div className="row between">
               <h2 className="h2">사진 업로드</h2>
-              <span className="chip" style={{ background: consent ? '#F9EBE8' : '#ECE5E1', color: consent ? '#85505A' : '#5B5552' }}>
+              <span className="chip" style={{ background: consent ? '#F9EBE8' : '#ECE5E1', color: consent ? '#7A4450' : '#4A3F3B' }}>
                 <i></i>사진 동의 {consent ? '있음 (2026.06.26)' : '철회됨'}
               </span>
             </div>
             {consent ? (
-              <>
+              <div className="col kp-fade" key="on" style={{ gap: 12 }}>
                 <div className="row" style={{ gap: 8 }}>
-                  <button type="button" className="btn btn-p" onClick={() => setUploaded(true)}>+ 시술 사진 올리기</button>
-                  <button type="button" className="btn" onClick={() => { setConsent(false); setUploaded(false); }}>사진 동의 철회 (시연)</button>
+                  <button type="button" className="btn btn-p" onClick={() => { setUploaded(true); toast('시술 사진 1장을 비공개로 저장했어요 (시연)'); }}>+ 시술 사진 올리기</button>
+                  <button type="button" className="btn" onClick={() => { setConsent(false); setUploaded(false); toast('사진 동의를 철회했어요 · 저장된 사진을 삭제했어요', 'warn'); }}>사진 동의 철회 (시연)</button>
                 </div>
-                {uploaded ? <p className="note">시술 사진 1장이 비공개로 저장됐어요. (시연)</p> : null}
-              </>
+                {uploaded ? <p className="note kp-fade">시술 사진 1장이 비공개로 저장됐어요. (시연)</p> : null}
+              </div>
             ) : (
-              <>
+              <div className="col kp-fade" key="off" style={{ gap: 12 }}>
                 <p className="note">사진 동의가 철회되어 저장된 사진이 즉시 삭제됐고, 새 사진은 올릴 수 없어요. 동의를 다시 받으면 업로드할 수 있어요.</p>
-                <div><button type="button" className="btn" onClick={() => setConsent(true)}>사진 동의 다시 받기 (시연)</button></div>
-              </>
+                <div><button type="button" className="btn" onClick={() => { setConsent(true); toast('사진 동의를 다시 받았어요'); }}>사진 동의 다시 받기 (시연)</button></div>
+              </div>
             )}
             <p className="meta">사진은 고객 동의를 받은 경우에만 업로드할 수 있어요. 동의를 철회하면 사진이 즉시 삭제돼요. 사진은 외부에 공개되지 않고 비공개로 저장돼요.</p>
           </section>
@@ -84,7 +85,7 @@ export default function HistoryPage() {
           <section className="card col" style={{ gap: 16 }}>
             <h2 className="h2">사진 타임라인</h2>
             {consent ? (
-              <div className="tl">
+              <div className="tl kp-fade" key={filter}>
                 {list.map((t) => (
                   <div className="tl-item" key={t.date + t.treat}>
                     <div style={{ height: 150, overflow: 'hidden', borderRadius: 16 }}>
@@ -99,7 +100,7 @@ export default function HistoryPage() {
                 ))}
               </div>
             ) : (
-              <p className="sub">표시할 사진이 없어요. 시술 기록 텍스트는 고객 상세에서 확인할 수 있어요.</p>
+              <p className="sub kp-fade">표시할 사진이 없어요. 시술 기록 텍스트는 고객 상세에서 확인할 수 있어요.</p>
             )}
           </section>
           <p className="meta">시연용 데이터예요. 시술 기록은 매장 CRM과 시술별 재방문 예측에 반영돼요.</p>

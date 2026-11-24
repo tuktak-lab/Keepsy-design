@@ -54,8 +54,8 @@ export function PinGate(props: { id: string; title: string; children: ReactNode 
         }}
       >
         <div style={{ fontSize: '28px', lineHeight: 1 }} aria-hidden="true">🔒</div>
-        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#2F2826' }}>{props.title}</h2>
-        <p style={{ margin: 0, fontSize: '13px', color: '#7A6D68', lineHeight: 1.6 }}>
+        <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#221D1B' }}>{props.title}</h2>
+        <p style={{ margin: 0, fontSize: '13px', color: '#6B605B', lineHeight: 1.6 }}>
           잠긴 기능입니다. 사용이 허용된 스탭의 PIN을 입력해 주세요.
         </p>
         <input
@@ -83,11 +83,11 @@ export function PinGate(props: { id: string; title: string; children: ReactNode 
         {err && <span style={{ fontSize: '12px', color: '#8F2F2F' }}>PIN이 맞지 않아요. 다시 입력해 주세요.</span>}
         <button
           type="submit"
-          style={{ height: '46px', border: 0, borderRadius: '12px', background: '#85505A', color: '#fff', font: "500 14px 'Noto Sans KR', sans-serif", cursor: 'pointer' }}
+          style={{ height: '46px', border: 0, borderRadius: '12px', background: '#7A4450', color: '#fff', font: "500 14px 'Noto Sans KR', sans-serif", cursor: 'pointer' }}
         >
           열기
         </button>
-        <span style={{ fontSize: '11.5px', color: '#9A8D88' }}>시연용 PIN: 1234</span>
+        <span style={{ fontSize: '11.5px', color: '#6B605B' }}>시연용 PIN: 1234</span>
       </form>
     </div>
   );

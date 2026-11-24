@@ -7,10 +7,10 @@ import styleText from './CustomersPage.css?inline';
 import { useStyleSheet } from '@/hooks/useStyleSheet';
 
 const SEG: Record<string, [string, string]> = {
-  예정: ['#F3EEEE', '#5B5552'],
-  '주기 도래': ['#F9EBE8', '#85505A'],
+  예정: ['#F3EEEE', '#4A3F3B'],
+  '주기 도래': ['#F9EBE8', '#7A4450'],
   '이탈 신호': ['#F6DFDF', '#8F2F2F'],
-  '장기 미방문': ['#ECE5E1', '#5B5552'],
+  '장기 미방문': ['#ECE5E1', '#4A3F3B'],
 };
 
 const R = [
@@ -46,7 +46,7 @@ export default function CustomersPage() {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', minHeight: '1020px' }}>
-      <div style={{ flex: '0 0 232px', background: '#F4EBE6' }}>
+      <div style={{ flex: '0 0 232px' }}>
         <Sidebar active="customers" />
       </div>
       <main style={{ flex: '999 1 640px', minWidth: '0', display: 'flex', flexDirection: 'column' }}>
@@ -95,6 +95,7 @@ export default function CustomersPage() {
               <span>시술 카테고리</span>
               <span>예측 상태</span>
             </div>
+            <div className="kp-fade" key={[q, cat, seg, vis].join('|')}>
             {rows.map((r) => (
               <div className={'crow' + (r.id === sel ? ' on' : '')} key={r.id}>
                 <button type="button" className="pick" onClick={() => setSel(r.id)} aria-pressed={r.id === sel}>
@@ -116,13 +117,17 @@ export default function CustomersPage() {
                 </span>
               </div>
             ))}
-            {rows.length === 0 ? <p className="sub" style={{ padding: '28px 24px' }}>조건에 맞는 고객이 없어요.</p> : null}
+            {rows.length === 0 ? (
+              <div className="kp-empty"><b>조건에 맞는 고객이 없어요</b>검색어나 필터를 바꿔 보세요.</div>
+            ) : null}
+            </div>
             <div className="meta" style={{ padding: '10px 18px 8px', borderTop: '1px solid #F1E4E0' }}>
               전체 248명 중 {rows.length}명 표시
             </div>
           </section>
 
-          <section className="card row between">
+          <section className="card">
+            <div className="row between kp-slide" key={cur.id}>
             <div className="row" style={{ gap: '14px' }}>
               <Avatar who={cur.name} size="48" />
               <div className="col">
@@ -133,6 +138,7 @@ export default function CustomersPage() {
             <div className="row" style={{ gap: '8px' }}>
               <AppLink href="/customers/detail" className="btn">고객 상세</AppLink>
               <AppLink href="/history" className="btn btn-p">시술 히스토리북</AppLink>
+            </div>
             </div>
           </section>
           <p className="meta">
